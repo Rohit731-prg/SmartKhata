@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
-import Lottie from "lottie-react";
-import loading from "../../assets/loading.json";
+// import Lottie from "lottie-react";
+// import loading from "../../assets/loading.json";
 
 function Customers() {
     const [customers, setCustomers] = useState(null);
