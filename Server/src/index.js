@@ -6,12 +6,9 @@ import cors from "cors";
 import CustomerRouter from "./Router/CustomerRouter.js";
 
 const app = express();
-const port = process.env.PORT || 4200
+const port = process.env.PORT || 4000
 
-app.use(cors({
-    origin: "*",
-    credentials: true
-}))
+app.use(cors());
 app.use(express.json({
     limit: "1mb"
 }));

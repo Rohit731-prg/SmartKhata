@@ -6,7 +6,8 @@ const CustomerSchema = new Schema({
     address: { type: String, require: true },
     debit: { type: Number, default: 0 },
     credit: { type: Number, default: 0 },
-    shop: { type: Schema.Types.ObjectId, require: true}
+    // shop: { type: Schema.Types.ObjectId, require: true}
+    shop: { type: String }
 }, {
     timestamps: true
 });

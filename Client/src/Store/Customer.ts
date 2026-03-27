@@ -1,39 +1,67 @@
 import { create } from 'zustand';
-import axios from "../Utils/axios";
+// import api from '../Utils/axios';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
 type customer = {
-    name: String,
-    phone: String,
-    address: String,
+    _id: string,
+    name: string,
+    phone: string,
+    address: string,
+    debit: number,
+    credit: number,
+    createdAt: Date
 }
 
 type Store = {
-    customers: customer | null,
+    customer: customer | null,
+    customers: customer[] | null,
     total_customer: number,
-    addCustomer: (data: any) => void
+    addCustomer: (data: any) => void,
+    getAllCustomers: () => void
 }
 
 const customerStore = create<Store>()((set) => ({
-  customers: null,
-  total_customer: 0,
+    customer: null,
+    customers: null,
+    total_customer: 0,
 
-  addCustomer: async (data) => {
-    try {
-        const response = axios.post("/api/customer/createCustomer", {
-            data
-        });
-        await toast.promise(response, {
-            loading: "Loading...!",
-            success: (res) => res.data.message || "Successfully added new customer.",
-            error: (err) => err?.response?.data?.message || "Something went wrong..!"
-        });
-        console.log(response);
-        set({ customers: null });
-    } catch (error) {
-        console.error(error);
+    addCustomer: async (data) => {
+        try {
+            console.log(data);
+            console.log("function called");
+
+            const promise = axios.post("http://localhost:4000/api/customer/createCustomer", {
+                name: data.name,
+                phone: data.phone,
+                address: data.address,
+                shop: "bh"
+            });
+            console.log(promise)
+            toast.promise(promise, {
+                loading: "Loading...!",
+                success: (res) => res?.data?.message || "Successfully added new customer.",
+                error: (err) =>
+                    err?.response?.data?.message || err.message || "Internal Server error"
+            });
+            await promise;
+            set({ customers: null });
+
+        } catch (error) {
+            console.error(error);
+        }
+    },
+
+    getAllCustomers: async () => {
+        try {
+            const response = await axios.get("http://localhost:4000/api/customer/getAllCustomers");
+            console.log(response);
+            set({ customers: response?.data?.customers });
+
+        } catch (error) {
+            console.error(error)
+        }
     }
-  }
 
 }));
 
