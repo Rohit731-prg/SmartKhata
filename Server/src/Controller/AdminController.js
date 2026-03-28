@@ -14,7 +14,9 @@ export const createAdmin = async (req, res) => {
         const newAdmin = new Admin({
             name,
             phone,
-            password: hashPassword
+            password: hashPassword,
+            image: req.image_url,
+            image_id: req.image_id
         });
         newAdmin.save();
         return res.status(201).json({ message: "Shop owner ID is created successfully..!" });
