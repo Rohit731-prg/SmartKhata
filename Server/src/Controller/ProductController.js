@@ -20,6 +20,29 @@ export const addNewProduct = async (req, res) => {
     }
 };
 
-// export const addQuantity = async (req, res) => {
-//     const { }
-// }
+export const addPrice = async (req, res) => {
+    const { id, newPrice} = req.body;
+    if (!id || !newPrice) return res.status(400).json({ message: "id and price is require" });
+    if (newPrice <= 0) return res.status(400).json({ message: "price should be a possitive number" });
+
+    try {
+        const product = await Product.findById(id);
+        if (!product) return res.status(400).json({ message: "product does not found" });
+
+        await Product.updateOne({ _id: id}, {$set: { price: newPrice }});
+        return res.status(200).json({ message: "product price updated successfully" });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const findAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ shop: req.admin });
+        if (!products) return res.status(400).json({ message: "No products found on this request" });
+
+        return res.status(200).json({ products });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}

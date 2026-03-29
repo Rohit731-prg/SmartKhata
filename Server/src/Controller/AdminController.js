@@ -5,12 +5,12 @@ export const createAdmin = async (req, res) => {
     const { name, phone, password } = req.body;
     if (!name || !phone || !password) return res.status(400).json({ message: "All data is requesrd" });
     try {
-        const is_exist = await Admin.findOne(phone);
+        const is_exist = await Admin.findOne({phone});
         if (is_exist) return res.status(400).json({ message: `${phone} this number is already exist in database` });
-        const isValidPhone = /^[6-9]\d{9}$/.test(phone);
-        if (!isValidPhone) return res.status(400).json({ message: `${phone} this number is a valid mobile number` });
+        // const isValidPhone = /^[6-9]\d{9}$/.test(phone);
+        // if (!isValidPhone) return res.status(400).json({ message: `${phone} this number is not a valid mobile number` });
 
-        const hashPassword = setPassword(password);
+        const hashPassword = await setPassword(password);
         const newAdmin = new Admin({
             name,
             phone,
@@ -18,12 +18,12 @@ export const createAdmin = async (req, res) => {
             image: req.image_url,
             image_id: req.image_id
         });
-        newAdmin.save();
+        await newAdmin.save();
         return res.status(201).json({ message: "Shop owner ID is created successfully..!" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 export const loginController = async (req, res) => {
     const {phone, password} = req.body;
@@ -40,4 +40,4 @@ export const loginController = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
