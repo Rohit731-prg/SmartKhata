@@ -30,14 +30,14 @@ export const loginController = async (req, res) => {
     if (!phone || !password) return  res.status(400).json({ message: "All data is requesrd" });
 
     try {
-        const is_exist = await Admin.findOne(phone);
+        const is_exist = await Admin.findOne({phone});
         if (!is_exist) return res.status(400).json({ message: "Phone number does not found" });
 
-        const is_password_match = getPasswordCheck(password, is_exist.password);
-        if (!is_password_match) res.status(400).json({ message: "Password does not match" });
+        const is_password_match = await getPasswordCheck(password, is_exist.password);
+        if (!is_password_match) return res.status(400).json({ message: "Password does not match" });
 
         return res.status(200).json({ is_exist });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };

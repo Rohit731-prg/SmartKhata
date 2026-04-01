@@ -1,6 +1,11 @@
 import { useState } from "react";
+import useAdminStore from "../Store/Admin";
+import { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
+  const { setAdmin } = useAdminStore();
   const [is_admin, setIs_admin] = useState(true);
   const [userDetais, setUserSetails] = useState({
     phone: "",
@@ -9,6 +14,9 @@ function Login() {
 
   const handelAdminSubmit = async (e: any) => {
     e.preventDefault();
+    const is_logged_in = await setAdmin(userDetais);
+    // if (is_logged_in) navigate("/add_customer");
+    navigate("/add_customer");
   };
 
   return (
@@ -43,6 +51,8 @@ function Login() {
               <label className="text-sm text-gray-600">Phone</label>
               <input
                 type="tel"
+                value={userDetais.phone}
+                onChange={(e) => setUserSetails({ ...userDetais, phone: e.target.value })}
                 placeholder="Enter phone number"
                 className="w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -51,6 +61,8 @@ function Login() {
             <div>
               <label className="text-sm text-gray-600">Password</label>
               <input
+                value={userDetais.password}
+                onChange={(e) => setUserSetails({ ...userDetais, password: e.target.value })}
                 type="password"
                 placeholder="Enter password"
                 className="w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -70,6 +82,7 @@ function Login() {
           </div>
         )}
       </aside>
+      <Toaster />
     </div>
   );
 }

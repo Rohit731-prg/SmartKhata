@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import CustomerRouter from "./Router/CustomerRouter.js";
 import AdminRouter from "./Router/AdminRouter.js";
+import ProductRouter from "./Router/ProductRouter.js";
 
 const app = express();
 const port = process.env.PORT || 4000
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 app.use("/api/customer", CustomerRouter);
 app.use("/api/admin", AdminRouter);
+app.use("/api/product", ProductRouter);
 
 await connectDB();
 app.listen(port, () => {
