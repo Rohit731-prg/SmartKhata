@@ -3,6 +3,7 @@ import { decodeToken } from "../Utils/token.js";
 
 export const verifyJwt = async (req, res, next) => {
     const { token } = req.cookies;
+    console.log("token: ", token);
     if (!token) return res.status(404).json({ message: "Token not found "});
     try {
         const decode = decodeToken(token);

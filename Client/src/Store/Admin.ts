@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
@@ -7,68 +8,99 @@ interface Login {
     password: string,
 }
 
-interface Admin {
+interface AdminResponse {
     name: string,
     phone: string,
-    image?: File
+    image?: string
+}
+
+interface basicDetails {
+    totalUsers: number,
+    totalProducts: number,
+    totalSalesThisMonth: number,
+    totalSales: number,
+
+    newUser: [{
+        name: string,
+        phone: string,
+        createdAt: string
+    }],
+    newProduct: [{
+        product_name: string,
+        price: number,
+        createdAt: string
+    }],
 }
 
 type Store = {
-    admin: null | Admin
-    createAdmin: (admin: Admin) => void,
+    admin: AdminResponse | null,
+    basicDeials: basicDetails | null,
     setAdmin: (admin: Login) => Promise<boolean>
-    basicDetails: () => void
+    getBasicDetails: () => Promise<void>
+    logout: () => void
 }
 
-const useAdminStore = create<Store>()((set) => ({
-    admin: null,
-    createAdmin: async (admin: Admin) => {
-        try {
-            // const response = axios.post('http://localhost:4000/api/admin/createAdmin', {
-            //     name: admin.name,
-            //     phone: admin.phone,
-            // });
+const useAdminStore = create<Store>()(
+    persist(
+        (set, get) => ({
+            admin: null,
+            basicDeials: null,
 
-            // toast.promise(response, {
-            //     loading: "loading...",
-            //     success: (res) => res.data.message || "Login successfully..",
-            //     error: (err) => err.response.data.message || "Something went wrong"
-            // });
-            // await response;
+            setAdmin: async (admin: Login) => {
+                try {
+                    const promise = axios.post(
+                        'http://localhost:4000/api/admin/login',
+                        admin
+                    );
 
-            // console.log(response);
-        } catch (error) {
-            console.error("Error setting admin:", error);
+                    const res = await toast.promise(promise, {
+                        loading: "Logging in...",
+                        success: (res) => res.data.message || "Login successful",
+                        error: (err) => err.response?.data?.message || "Login failed"
+                    });
+
+                    set({
+                        admin: {
+                            name: res.data.is_exist.name,
+                            phone: res.data.is_exist.phone,
+                            image: res.data.is_exist.image
+                        }
+                    });
+                    console.log("Admin logged in:", res.data);
+                    console.log("Admin logged in zustand:", get().admin);
+                    return true;
+
+                } catch (error) {
+                    console.error("Login error:", error);
+                    return false;
+                }
+            },
+            getBasicDetails: async () => {
+                try {
+                    const response = await axios.get("http://localhost:4000/api/admin/basicDetails");
+                    const data = response.data;
+                    console.log("Basic details fetched:", data);
+                    set({
+                        basicDeials: {
+                            totalUsers: data.customers_count,
+                            totalProducts: data.products_count,
+                            totalSalesThisMonth: data.total_sale_month,
+                            totalSales: data.total_amount,
+
+                            newUser: data.customers,
+                            newProduct: data.products,
+                        }
+                    })
+                } catch (error) {
+                    console.error("Error fetching basic details:", error);
+                }
+            },
+            logout: () => set({ admin: null })
+        }),
+        {
+            name: "admin-storage",
         }
-    },
-
-    setAdmin: async (admin: Login) => {
-        try {
-            const response = axios.post('http://localhost:4000/api/admin/login', {
-                phone: admin.phone,
-                password: admin.password
-            });
-            toast.promise(response, {
-                loading: "loading...",
-                success: (res) => res.data.message || "Login successfully..",
-                error: (err) => err.response.data.message || "Something went wrong"
-            });
-            await response;
-            console.log(response);
-            return true;
-        } catch (error) {
-            console.error("Error setting admin:", error);
-            return false;
-        }
-    },
-
-    basicDetails: () => {
-        try {
-            
-        } catch (error) {
-            console.error("Error fetching basic details:", error);
-        }
-    }
-}));
+    )
+);
 
 export default useAdminStore;

@@ -15,8 +15,7 @@ function Login() {
   const handelAdminSubmit = async (e: any) => {
     e.preventDefault();
     const is_logged_in = await setAdmin(userDetais);
-    // if (is_logged_in) navigate("/add_customer");
-    navigate("/add_customer");
+    if (is_logged_in) navigate("/home");
   };
 
   return (

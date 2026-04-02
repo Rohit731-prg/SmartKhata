@@ -5,6 +5,7 @@ import Login from "./Components/Login"
 import Products from "./Components/Admin/Products"
 import AddProduct from "./Components/Admin/AddProduct"
 import Home from "./Components/Admin/Home"
+import AddPurches from "./Components/Admin/AddPurches"
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/all-customer" element={<Customers />} />
         <Route path="/all-products" element={<Products />} />
         <Route path="/add-products" element={<AddProduct />} />
+        <Route path="/add-purches" element={<AddPurches />} />
       </Routes>
     </Router>
   )
