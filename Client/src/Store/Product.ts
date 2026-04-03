@@ -2,7 +2,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { create } from 'zustand'
 
-interface Product {
+export interface Product {
     _id?: string;
     product_name: string;
     price: number;

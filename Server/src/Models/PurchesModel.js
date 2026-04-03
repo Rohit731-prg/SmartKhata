@@ -5,6 +5,9 @@ const PurchesSchema = new Schema({
     Admin: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true },
     Customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
     total_amount: { type: Number, required: true },
+    paid: { type: Number, required: true },
+    due: { type: Number, required: true },
+    type: { type: String, enum: ["paid", "due"], required: true },
 }, {
     timestamps: true
 });

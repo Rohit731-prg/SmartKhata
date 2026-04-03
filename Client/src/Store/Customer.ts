@@ -18,7 +18,8 @@ type Store = {
     customers: customer[] | null,
     total_customer: number,
     addCustomer: (data: any) => void,
-    getAllCustomers: () => void
+    getAllCustomers: () => void,
+    setCustomer: (customer: customer) => void
 }
 
 const customerStore = create<Store>()((set) => ({
@@ -61,7 +62,8 @@ const customerStore = create<Store>()((set) => ({
         } catch (error) {
             console.error(error)
         }
-    }
+    },
+    setCustomer: (customer: customer) => set({ customer }),
 
 }));
 

@@ -6,7 +6,10 @@ function Home() {
   const [basicDetails, setBasicDetails] = useState([
     { name: "Total Users", value: basicDeials?.totalUsers || 0 },
     { name: "Total Products", value: basicDeials?.totalProducts || 0 },
-    { name: "Total Sales on this month", value: basicDeials?.totalSalesThisMonth || 0 },
+    {
+      name: "Total Sales on this month",
+      value: basicDeials?.totalSalesThisMonth || 0,
+    },
     { name: "Total Sales", value: basicDeials?.totalSales || 0 },
   ]);
   const [details, setDetails] = useState([
@@ -18,10 +21,14 @@ function Home() {
     getBasicDetails();
   }, []);
   return (
-    <aside className="w-full bg-white min-h-screen p-6 rounded-2xl shadow-sm border border-gray-200">
-        <p>Welcome Back Admin</p>
-        <p>{admin?.name}</p>
-        <img src={admin?.image} alt="" />
+    <aside className="w-full bg-white min-h-screen p-8 rounded-2xl shadow-sm border border-gray-200">
+      <div className="flex flex-row justify-between">
+        <div>
+          <p className="text-gray-500 text-xl">Welcome Back Admin, </p>
+          <p className="text-lg font-semibold">{admin?.name}</p>
+        </div>
+        <img src={admin?.image} alt="" className="w-16 h-16 object-cover" />
+      </div>
       {/* 🔝 Basic Details (Stats Cards) */}
       <header className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10">
         {basicDetails.map((details, index) => (
@@ -53,9 +60,7 @@ function Home() {
             >
               <span>{detail.name}</span>
 
-              <span className="text-white">
-                →
-              </span>
+              <span className="text-white">→</span>
             </button>
           ))}
         </div>
@@ -69,64 +74,67 @@ function Home() {
               <p className="text-lg font-semibold text-gray-700 mb-2">
                 New Users This Month
               </p>
-              <table>
-                <thead>
+
+              <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+                <thead className="bg-gray-100">
                   <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Date</th>
+                    <th className="p-2 text-left">Name</th>
+                    <th className="p-2 text-left">Phone</th>
+                    <th className="p-2 text-left">Date</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {basicDeials.newUser.map((user, index) => (
-                    <tr key={index}>
-                      <td>{user.name}</td>
-                      <td>{user.phone}</td>
-                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                  {basicDeials.newUser?.map((user, index) => (
+                    <tr key={index} className="border-t">
+                      <td className="p-2">{user.name}</td>
+                      <td className="p-2">{user.phone}</td>
+                      <td className="p-2">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <div>
-              <p className="text-sm text-gray-500">
-                No new users this month. Encourage more sign-ups!
-              </p>
-            </div>
+            <p className="text-sm text-gray-500">
+              No new users this month. Encourage more sign-ups!
+            </p>
           )}
         </section>
-        <section>
+
+        <section className="mt-6">
           <p className="text-lg font-semibold text-gray-700 mb-2">
             New Products This Month
           </p>
+
           {basicDeials?.newProduct ? (
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Date</th>
+            <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-2 text-left">Name</th>
+                  <th className="p-2 text-left">Price</th>
+                  <th className="p-2 text-left">Date</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {basicDeials.newProduct.map((product, index) => (
+                  <tr key={index} className="border-t">
+                    <td className="p-2">{product.product_name}</td>
+                    <td className="p-2">₹{product.price}</td>
+                    <td className="p-2">
+                      {new Date(product.createdAt).toLocaleDateString()}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {basicDeials.newProduct.map((product, index) => (
-                    <tr key={index}>
-                      <td>{product.product_name}</td>
-                      <td>{product.price}</td>
-                      <td>{new Date(product.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           ) : (
-            <div>
-              <p className="text-sm text-gray-500">
-                No new products this month. Encourage more listings!
-              </p>
-            </div>
+            <p className="text-sm text-gray-500">
+              No new products this month. Encourage more listings!
+            </p>
           )}
         </section>
       </div>

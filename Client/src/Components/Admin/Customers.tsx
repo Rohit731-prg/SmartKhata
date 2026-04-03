@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function Customers() {
   const navigate = useNavigate();
-  const { getAllCustomers, customers } = customerStore();
+  const { getAllCustomers, customers, setCustomer } = customerStore();
 
   useEffect(() => {
     getAllCustomers();
@@ -18,6 +18,11 @@ function Customers() {
   const filterCustomer = (customers || []).filter((cus) => {
     return cus.name.toLowerCase().includes(search.toLowerCase());
   });
+
+  const handelSumbit = (customer: any) => {
+    setCustomer(customer);
+    navigate("/add-purches");
+  }
   return (
     <aside className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
@@ -56,7 +61,7 @@ function Customers() {
               return (
                 <div
                   key={Number(cus._id)}
-                  onClick={() => navigate("")}
+                  onClick={() => handelSumbit(cus)}
                   className="bg-white p-4 rounded-2xl shadow-sm border active:scale-[0.98] transition"
                 >
                   {/* Top Row */}
