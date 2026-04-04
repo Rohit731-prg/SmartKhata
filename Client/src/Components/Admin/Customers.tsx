@@ -21,7 +21,7 @@ function Customers() {
 
   const handelSumbit = (customer: any) => {
     setCustomer(customer);
-    navigate("/add-purches");
+    navigate("/all-purches");
   }
   return (
     <aside className="min-h-screen bg-gray-50 flex flex-col">
@@ -32,7 +32,7 @@ function Customers() {
         </button>
         <h1 className="text-lg font-semibold text-gray-800">Customers</h1>
         <button 
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/add_customer')}
         className="px-4 py-1.5 bg-black text-white rounded-full text-sm font-medium">
           + Add
         </button>
@@ -60,7 +60,7 @@ function Customers() {
 
               return (
                 <div
-                  key={Number(cus._id)}
+                  key={cus._id}
                   onClick={() => handelSumbit(cus)}
                   className="bg-white p-4 rounded-2xl shadow-sm border active:scale-[0.98] transition"
                 >

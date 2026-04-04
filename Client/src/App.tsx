@@ -9,6 +9,7 @@ import Home from "./Components/Admin/Home"
 import AddPurches from "./Components/Admin/AddPurches"
 import Layout from "./Components/Layout"
 import Error from "./Components/Error"
+import AllPurches from "./Components/Admin/AllPurches"
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/all-customer" element={<Customers />} />
           <Route path="/all-products" element={<Products />} />
           <Route path="/add-products" element={<AddProduct />} />
+          <Route path="/all-purches" element={<AllPurches />} />
           <Route path="/add-purches" element={<AddPurches />} />
         </Route>
 

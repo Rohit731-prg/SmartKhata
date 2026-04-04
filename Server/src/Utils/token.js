@@ -5,5 +5,5 @@ export const createToken = (data) => {
 }
 
 export const decodeToken = (token) => {
-    return JWT.decode(token, process.env.JWT_CODE);
+    return JWT.verify(token, process.env.JWT_CODE);
 }

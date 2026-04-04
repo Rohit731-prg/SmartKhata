@@ -7,7 +7,7 @@ const PurchesSchema = new Schema({
     total_amount: { type: Number, required: true },
     paid: { type: Number, required: true },
     due: { type: Number, required: true },
-    type: { type: String, enum: ["paid", "due"], required: true },
+    type: { type: String, enum: ["paid", "due", "partially_paid"], required: true },
 }, {
     timestamps: true
 });

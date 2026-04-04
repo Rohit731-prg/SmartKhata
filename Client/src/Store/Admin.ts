@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { api } from '../Utils/axios'
 
 interface Login {
     phone: string,
@@ -48,8 +49,8 @@ const useAdminStore = create<Store>()(
 
             setAdmin: async (admin: Login) => {
                 try {
-                    const promise = axios.post(
-                        'http://localhost:4000/api/admin/login',
+                    const promise = api.post(
+                        '/admin/login',
                         admin
                     );
 

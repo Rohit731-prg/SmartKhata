@@ -1,30 +1,34 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { create } from 'zustand'
+import { api } from '../Utils/axios';
 
-export interface Product {
-    _id?: string;
+interface basicProduct {
     product_name: string;
     price: number;
     quantity_available: number;
+}
+
+export interface Product extends basicProduct {
+    _id?: string;
     type: string;
 };
 
-interface productRequest {
-    product_name: string;
-    price: number;
-    quantity_available: number;
+interface productRequest extends basicProduct {
     type: string;
 }
 
 type Store = {
     products: Product[];
+    basicProducts: basicProduct[] | null;
     getAllProducts: () => void;
     addProduct: (product: Product) => void;
+    getProductsDetails: (id: string) => Promise<void>;
 }
 
 const useProductStore = create<Store>()((set) => ({
     products: [],
+    basicProducts: null,
     getAllProducts: async () => {
         try {
             const response = await axios.get("http://localhost:4000/api/product/get-all-product");
@@ -49,6 +53,16 @@ const useProductStore = create<Store>()((set) => ({
             console.error("Error adding product:", error);
         }
     },
+
+    getProductsDetails: async (id: string) => {
+        try {
+            const response = await api.get(`/product/getPurchesDetails/${id}`);
+            console.log(response);
+            set({ basicProducts: response.data.productDetails });
+        } catch (error) {
+            console.log("Error from productDetails: ", error);
+        }
+    }
 }));
 
 export default useProductStore;
