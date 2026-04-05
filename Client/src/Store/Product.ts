@@ -1,4 +1,3 @@
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { create } from 'zustand'
 import { api } from '../Utils/axios';
@@ -24,6 +23,7 @@ type Store = {
     getAllProducts: () => void;
     addProduct: (product: Product) => void;
     getProductsDetails: (id: string) => Promise<void>;
+    getLowProducts: () => Promise<void>;
 }
 
 const useProductStore = create<Store>()((set) => ({
@@ -31,7 +31,7 @@ const useProductStore = create<Store>()((set) => ({
     basicProducts: null,
     getAllProducts: async () => {
         try {
-            const response = await axios.get("http://localhost:4000/api/product/get-all-product");
+            const response = await api.get("/product/get-all-product");
             console.log(response);
             set({ products: response?.data?.products || [] });
         } catch (error) {
@@ -40,7 +40,7 @@ const useProductStore = create<Store>()((set) => ({
     },
     addProduct: async (product: productRequest) => {
         try {
-            const response = axios.post("http://localhost:4000/api/product/add-product", product);
+            const response = api.post("/product/add-product", product);
             toast.promise(response, {
                 loading: "Adding product...",
                 success: (res) => res?.data?.message || "Product added successfully.",
@@ -61,6 +61,16 @@ const useProductStore = create<Store>()((set) => ({
             set({ basicProducts: response.data.productDetails });
         } catch (error) {
             console.log("Error from productDetails: ", error);
+        }
+    },
+    getLowProducts: async () => {
+        try {
+            const response = await api.get("/product/get-low-stock-product");
+            console.log(response);
+            set({ products: response.data.products });
+        } catch (error: any) {
+            console.log("Error from low products: ", error);
+            toast.error(error?.response?.data?.message || "Failed to fetch low stock products.");
         }
     }
 }));

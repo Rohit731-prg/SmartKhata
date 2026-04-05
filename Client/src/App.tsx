@@ -10,6 +10,9 @@ import AddPurches from "./Components/Admin/AddPurches"
 import Layout from "./Components/Layout"
 import Error from "./Components/Error"
 import AllPurches from "./Components/Admin/AllPurches"
+import AllTransaction from "./Components/Admin/AllTransaction"
+import PurchesDetails from "./Components/Admin/PurchesDetails"
+import LowProductStock from "./Components/Admin/LowProductStock"
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
           <Route path="/add-products" element={<AddProduct />} />
           <Route path="/all-purches" element={<AllPurches />} />
           <Route path="/add-purches" element={<AddPurches />} />
+          <Route path="/purches-details" element={<PurchesDetails />} />
+          <Route path="/all-transaction" element={<AllTransaction />} />
+          <Route path="/low-stock-product" element={<LowProductStock />} />
         </Route>
 
       </Routes>

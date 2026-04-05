@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useAdminStore from "../../Store/Admin";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
   const { getBasicDetails, basicDeials, admin } = useAdminStore();
-  const [basicDetails, setBasicDetails] = useState([
+  const basicDetails = [
     { name: "Total Users", value: basicDeials?.totalUsers || 0 },
     { name: "Total Products", value: basicDeials?.totalProducts || 0 },
     {
@@ -11,11 +13,11 @@ function Home() {
       value: basicDeials?.totalSalesThisMonth || 0,
     },
     { name: "Total Sales", value: basicDeials?.totalSales || 0 },
-  ]);
-  const [details, setDetails] = useState([
+  ];
+  const details = [
     { name: "See Your Debtors", navigate: "/" },
-    { name: "See low stock products", navigate: "/" },
-  ]);
+    { name: "See low stock products", navigate: "/low-stock-product" },
+  ];
 
   useEffect(() => {
     getBasicDetails();
@@ -55,6 +57,7 @@ function Home() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {details.map((detail, index) => (
             <button
+              onClick={() => navigate(detail.navigate)}
               key={index}
               className="bg-blue-500 border font-semibold border-blue-800 px-4 py-3 rounded-xl text-sm  text-white flex items-center justify-between group"
             >

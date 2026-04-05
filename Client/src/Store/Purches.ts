@@ -9,7 +9,7 @@ interface RequestPurches {
     type: string,
 }
 
-interface Purches extends RequestPurches {
+export interface Purches extends RequestPurches {
     _id: string;
     total_amount: number;
     due: number;
@@ -22,12 +22,18 @@ interface purchesResponse {
 }
 
 type Store = {
+    purches: Purches | null;
+    setPurches: (purches: Purches) => void;
     purcheses: Purches[] | null;
     addPurches: (data: RequestPurches) => Promise<void>;
     getAllPurcheses: (id: string) => Promise<void>;
 }
 
 const usePurchesStore = create<Store>()((set) => ({
+    purches: null,
+
+    setPurches: (purches: Purches) => set({ purches }),
+
     purcheses: null,
     addPurches: async (data: RequestPurches) => {
         console.log("Adding purches with data: ", data);
@@ -54,7 +60,7 @@ const usePurchesStore = create<Store>()((set) => ({
             });
             await response;
             console.log(response);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to add purches:", error);
         }
     },
@@ -63,10 +69,10 @@ const usePurchesStore = create<Store>()((set) => ({
             const response = await api.get(`/purches/get_all_purches/${id}`);
             console.log(response);
             set({ purcheses: response.data.purches });
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch purcheses:", error);
         }
-    }
+    }       
 }));
 
 export default usePurchesStore;

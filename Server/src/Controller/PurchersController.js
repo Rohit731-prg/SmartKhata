@@ -4,7 +4,6 @@ import Purches from "../Models/PurchesModel.js";
 
 export const createPurchers = async (req, res) => {
     const { products, customer, paid, type } = req.body;
-    console.log(req.body);
     if (!products || !customer || paid === undefined || !type) return res.status(400).json({ message: "All fields are required" });
     if (products.length === 0) return res.status(400).json({ message: "Products are required" });
     if (!["paid", "due", "partially_paid"].includes(type)) return res.status(400).json({ message: "Type must be either paid or due" });
@@ -18,7 +17,7 @@ export const createPurchers = async (req, res) => {
             let product_details = await Product.findById(product.product);
             if (!product_details) return res.status(404).json({ message: `Product with id ${product.product} not found` });
             if (product_details.quantity < product.quantity) return res.status(400).json({ message: `Not enough quantity for product with id ${product.product.name}` });
-            await Product.findByIdAndUpdate(product.product, { $inc: { quantity: -product.quantity } });
+            await Product.findByIdAndUpdate(product.product, { $inc: { quantity_available: -product.quantity } });
             total_amout_calculated += product_details.price * product.quantity;
         }
 
@@ -64,16 +63,18 @@ export const getPurchesDetails = async (req, res) => {
 
         let productDetails = [];
         for (const product of purches.product) {
+            console.log(product);
             let details = {}
             const product_details = await Product.findById(product.product).select("product_name price type");
-            details[product] = product_details;
-            details[quantity] = product.quantity;
+            details["product"] = product_details;
+            details["quantity"] = product.quantity;
 
             productDetails.push(details);
         };
 
         res.status(200).json({ productDetails });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
-}
+};

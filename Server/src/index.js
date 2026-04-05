@@ -7,6 +7,7 @@ import CustomerRouter from "./Router/CustomerRouter.js";
 import AdminRouter from "./Router/AdminRouter.js";
 import ProductRouter from "./Router/ProductRouter.js";
 import PurchesRouter from "./Router/PurchesRouter.js";
+import TransactionRouter from "./Router/TransactionRouter.js";
 
 const app = express();
 const port = process.env.PORT || 4000
@@ -24,6 +25,7 @@ app.use("/api/customer", CustomerRouter);
 app.use("/api/admin", AdminRouter);
 app.use("/api/product", ProductRouter);
 app.use("/api/purches", PurchesRouter);
+app.use("/api/transactions", TransactionRouter);
 
 await connectDB();
 app.listen(port, () => {

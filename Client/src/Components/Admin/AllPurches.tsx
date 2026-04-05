@@ -1,18 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import customerStore from "../../Store/Customer";
 import { useNavigate } from "react-router-dom";
-import usePurchesStore from "../../Store/Purches";
+import usePurchesStore, { type Purches } from "../../Store/Purches";
+import useTransactionStore from "../../Store/Transaction";
+import toast, { Toaster } from "react-hot-toast";
 
 function AllPurches() {
   const navigate = useNavigate();
   const { customer } = customerStore();
-  const { getAllPurcheses, purcheses } = usePurchesStore();
+  const { getAllPurcheses, purcheses, setPurches } = usePurchesStore();
+  const { addTransaction } = useTransactionStore();
+  const [amount, setAmount] = useState(0);
 
   useEffect(() => {
     if (customer) {
       getAllPurcheses(customer._id);
     }
   }, [customer]);
+
+  const handelSubmit = () => {
+    if (!customer) {
+      toast.error("Customer ID is missing");
+      return;
+    }
+    addTransaction(amount, customer?._id);
+  };
+
+  const handelNavigate = (purches: Purches) => {
+    setPurches(purches);
+    navigate("/purches-details");
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       {/* Header */}
@@ -49,10 +66,14 @@ function AllPurches() {
         <div className="mt-3 flex gap-2">
           <input
             type="number"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
             placeholder="Enter amount"
             className="flex-1 px-3 py-2 border rounded-xl outline-none text-sm"
           />
-          <button className="bg-green-600 text-white px-4 rounded-xl text-sm">
+          <button 
+            onClick={handelSubmit}
+            className="bg-green-600 text-white px-4 rounded-xl text-sm">
             Save
           </button>
         </div>
@@ -66,6 +87,7 @@ function AllPurches() {
 
             return (
               <div
+                onClick={() => handelNavigate(purches)}
                 key={purches._id}
                 className="bg-white p-4 rounded-2xl shadow-sm border"
               >
@@ -110,6 +132,7 @@ function AllPurches() {
           </div>
         )}
       </main>
+      <Toaster />
     </div>
   );
 }

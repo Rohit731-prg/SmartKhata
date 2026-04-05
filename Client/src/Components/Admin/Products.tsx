@@ -25,7 +25,7 @@ function Products() {
         </button>
         <h1 className="text-lg font-semibold text-gray-800">Products</h1>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/add-products")}
           className="px-4 py-1.5 bg-black text-white rounded-full text-sm font-medium"
         >
           + Add

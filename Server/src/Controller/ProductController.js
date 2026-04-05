@@ -4,14 +4,14 @@ export const addNewProduct = async (req, res) => {
     const { product_name, price, quantity_available, type } = req.body;
     console.log(req.body);
     if (!product_name || !price || !quantity_available || !type) return res.status(400).json({ message: "All details are require" });
-    if (!["KG", "pice"].includes(type)) return res.status(400).json({ message: "product type must be in KG or Pice" });
+    if (!["KG", "piece"].includes(type)) return res.status(400).json({ message: "product type must be in KG or Pice" });
     if (price <= 0) return res.status(400).json({ message: "Price should be in possitive number" });
     try {
         const is_exist = await Product.findOne({ product_name, shop: "69c8c68f1600b0b6193c9a5c" });
         if (is_exist) return res.status(400).json({ message: "Product is already exist" });
 
         const newProduct = new Product({
-            product_name, price, quantity_available, type, shop: "69c8c68f1600b0b6193c9a5c"
+            product_name, price, quantity_available, type, shop: req.admin
         });
         newProduct.save();
 
@@ -21,39 +21,25 @@ export const addNewProduct = async (req, res) => {
     }
 };
 
-export const addPrice = async (req, res) => {
-    const { id, newPrice} = req.body;
-    if (!id || !newPrice) return res.status(400).json({ message: "id and price is require" });
+export const updateProduct = async (req, res) => {
+    const { id, newPrice, newQuantity } = req.body;
+    if (!id || !newPrice || !newQuantity) return res.status(400).json({ message: "id and price is require" });
     if (newPrice <= 0) return res.status(400).json({ message: "price should be a possitive number" });
 
     try {
         const product = await Product.findById(id);
         if (!product) return res.status(400).json({ message: "product does not found" });
 
-        await Product.updateOne({ _id: id}, {$set: { price: newPrice }});
-        return res.status(200).json({ message: "product price updated successfully" });
+        await Product.updateOne({ _id: id}, {$set: { price: newPrice, quantity_available: newQuantity }});
+        return res.status(200).json({ message: "product updated successfully" });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 };
 
-export const addQuantity = async (req, res) => {
-    const { id, newQuantity} = req.body;
-    if (!id || !newQuantity) return res.status(400).json({ message: "id and quantity is require" });
-    try {
-        const product = await Product.findById(id);
-        if (!product) return res.status(400).json({ message: "product does not found" });
-
-        await Product.updateOne({ _id: id}, {$set: { quantity_available: newQuantity }});
-        return res.status(200).json({ message: "product quantity updated successfully" });
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
-
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({ shop: "69c8c68f1600b0b6193c9a5c" });
+        const products = await Product.find({ shop: req.admin });
         if (!products) return res.status(400).json({ message: "No products found on this request" });
 
         return res.status(200).json({ products });
@@ -64,8 +50,9 @@ export const getAllProducts = async (req, res) => {
 
 export const getLowQuantityProducts = async (req, res) => {
     try {
-        const products = await Product.find({ shop: "69c8c68f1600b0b6193c9a5c", quantity_available: { $lt: 10 } });
-        if (!products) return res.status(400).json({ message: "No low-quantity products found" });
+        const products = await Product.find({ shop: req.admin });
+        console.log(products);
+        if (products.length === 0) return res.status(400).json({ message: "No low-quantity products found" });
 
         return res.status(200).json({ products });
     } catch (error) {
@@ -74,7 +61,7 @@ export const getLowQuantityProducts = async (req, res) => {
 };
 
 export const deleteProduct = async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.params;
     if (!id) return res.status(400).json({ message: "id is require" });
     try {
         const product = await Product.findById(id);
