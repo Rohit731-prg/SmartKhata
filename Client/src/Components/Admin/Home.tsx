@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useAdminStore from "../../Store/Admin";
 import { useNavigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 function Home() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Home() {
     { name: "Total Sales", value: basicDeials?.totalSales || 0 },
   ];
   const details = [
-    { name: "See Your Debtors", navigate: "/" },
+    { name: "See Your Debtors", navigate: "/debitors" },
     { name: "See low stock products", navigate: "/low-stock-product" },
   ];
 
@@ -141,6 +142,7 @@ function Home() {
           )}
         </section>
       </div>
+      <Toaster/>
     </aside>
   );
 }

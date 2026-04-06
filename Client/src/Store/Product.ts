@@ -24,9 +24,11 @@ type Store = {
     addProduct: (product: Product) => void;
     getProductsDetails: (id: string) => Promise<void>;
     getLowProducts: () => Promise<void>;
+    updateProduct: (product: Product) => Promise<void>;
+    deleteProduct: (id: string) => Promise<void>;
 }
 
-const useProductStore = create<Store>()((set) => ({
+const useProductStore = create<Store>()((set, get) => ({
     products: [],
     basicProducts: null,
     getAllProducts: async () => {
@@ -72,7 +74,45 @@ const useProductStore = create<Store>()((set) => ({
             console.log("Error from low products: ", error);
             toast.error(error?.response?.data?.message || "Failed to fetch low stock products.");
         }
-    }
+    },
+
+    updateProduct: async (product: Product) => {
+        try {
+            const response = api.put(`/product/update-product`, {
+                id: product._id,
+                newPrice: product.price,
+                newQuantity: product.quantity_available,
+            });
+            toast.promise(response, {
+                loading: "Updating product...",
+                success: (res) => res?.data?.message || "Product updated successfully.",
+                error: (err) =>
+                    err?.response?.data?.message || err.message || "Failed to update product."
+            });
+            await response;
+            console.log(response);
+            get().getAllProducts(); // Refresh the product list after update
+        } catch (error) {
+            console.error("Error updating product:", error);
+        }
+    },
+
+    deleteProduct: async (id: string) => {
+        try {
+            const response = api.delete(`/product/delete-product/${id}`);
+            toast.promise(response, {
+                loading: "Deleting product...",
+                success: (res) => res?.data?.message || "Product deleted successfully.",
+                error: (err) =>
+                    err?.response?.data?.message || err.message || "Failed to delete product."
+            });
+            await response;
+            console.log(response);
+            get().getAllProducts(); // Refresh the product list after deletion
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    },
 }));
 
 export default useProductStore;

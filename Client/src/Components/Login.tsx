@@ -21,7 +21,6 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <aside className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6">
-
         {/* Toggle Buttons */}
         <div className="flex bg-gray-200 rounded-xl p-1 mb-6">
           <button
@@ -30,7 +29,7 @@ function Login() {
               is_admin ? "bg-white shadow text-blue-600" : "text-gray-500"
             }`}
           >
-            Admin
+            Login
           </button>
           <button
             onClick={() => setIs_admin(false)}
@@ -38,20 +37,21 @@ function Login() {
               !is_admin ? "bg-white shadow text-blue-600" : "text-gray-500"
             }`}
           >
-            Customer
+            Sign Up
           </button>
         </div>
 
         {/* Admin Login */}
         {is_admin ? (
           <form onSubmit={handelAdminSubmit} className="space-y-4">
-
             <div>
               <label className="text-sm text-gray-600">Phone</label>
               <input
                 type="tel"
                 value={userDetais.phone}
-                onChange={(e) => setUserSetails({ ...userDetais, phone: e.target.value })}
+                onChange={(e) =>
+                  setUserSetails({ ...userDetais, phone: e.target.value })
+                }
                 placeholder="Enter phone number"
                 className="w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -61,7 +61,9 @@ function Login() {
               <label className="text-sm text-gray-600">Password</label>
               <input
                 value={userDetais.password}
-                onChange={(e) => setUserSetails({ ...userDetais, password: e.target.value })}
+                onChange={(e) =>
+                  setUserSetails({ ...userDetais, password: e.target.value })
+                }
                 type="password"
                 placeholder="Enter password"
                 className="w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -76,8 +78,23 @@ function Login() {
             </button>
           </form>
         ) : (
-          <div className="text-center text-gray-500 text-sm">
-            Customer login coming soon...
+          <div className="">
+            <form className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-600">Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  className="w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <label className="text-sm text-gray-600">Phone</label>
+                <input
+                  type="tel"
+                  placeholder="Enter phone number"
+                  className="w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </form>
           </div>
         )}
       </aside>

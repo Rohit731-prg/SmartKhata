@@ -78,7 +78,7 @@ const useAdminStore = create<Store>()(
             },
             getBasicDetails: async () => {
                 try {
-                    const response = await axios.get("http://localhost:4000/api/admin/basicDetails");
+                    const response = await api.get("http://localhost:4000/api/admin/basicDetails");
                     const data = response.data;
                     console.log("Basic details fetched:", data);
                     set({
@@ -92,7 +92,8 @@ const useAdminStore = create<Store>()(
                             newProduct: data.products,
                         }
                     })
-                } catch (error) {
+                } catch (error: any) {
+                    toast.error(error?.response?.data?.message || error.message || "Failed to fetch basic details");
                     console.error("Error fetching basic details:", error);
                 }
             },

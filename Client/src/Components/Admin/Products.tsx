@@ -2,13 +2,31 @@ import { FaLongArrowAltLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IoSearchOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
-import useProductStore from "../../Store/Product";
+import useProductStore, { type Product } from "../../Store/Product";
+import { MdDelete } from "react-icons/md";
+import { MdModeEdit } from "react-icons/md";
+
+import Modal from "react-modal";
+import toast, { Toaster } from "react-hot-toast";
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
 
 function Products() {
+  const [modalIsOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const { products, getAllProducts } = useProductStore();
+  const { products, getAllProducts, deleteProduct, updateProduct } = useProductStore();
   const filterProfucts = products?.filter((product) =>
     product.product_name.toLowerCase().includes(search.toLowerCase()),
   );
@@ -16,6 +34,25 @@ function Products() {
   useEffect(() => {
     getAllProducts();
   }, []);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const onModelOpen = (product: Product) => {
+    setSelectedProduct(product);
+    setIsOpen(true);
+  };
+
+  const handelUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedProduct) {
+      await updateProduct(selectedProduct);
+      closeModal();
+    } else {
+      toast.error("Failed to update product. Please try again.");
+    }
+  }
   return (
     <aside className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
@@ -54,9 +91,21 @@ function Products() {
                 className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:-translate-y-1 transition duration-300"
               >
                 {/* Product Name */}
-                <h2 className="text-lg font-semibold text-gray-800 mb-1">
-                  {product.product_name}
-                </h2>
+                <div className="flex flex-row justify-between items-center">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-1">
+                    {product.product_name}
+                  </h2>
+                  <div className="flex flex-row gap-3 text-xl ">
+                    <button onClick={() => deleteProduct(product._id || "")} className="text-red-500">
+                      <MdDelete />
+                    </button>
+                    <button 
+                    onClick={() => onModelOpen(product)}
+                    className="text-blue-500">
+                      <MdModeEdit />
+                    </button>
+                  </div>
+                </div>
 
                 {/* Company */}
                 <p className="text-xs text-gray-400 mb-3">Company: N/A</p>
@@ -88,6 +137,93 @@ function Products() {
           )}
         </div>
       </main>
+      <Toaster />
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <div className="bg-white rounded-2xl shadow-xl p-5 flex flex-col gap-4">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-800">
+              Update Product
+            </h2>
+            <button
+              onClick={closeModal}
+              className="text-gray-400 hover:text-gray-600 text-sm"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t"></div>
+
+          {/* Form */}
+          <form className="flex flex-col gap-4" onSubmit={handelUpdate}>
+            {/* Quantity */}
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                Quantity
+              </label>
+              <input
+                value={selectedProduct?.quantity_available || 0}
+                onChange={(e) =>
+                  setSelectedProduct({
+                    ...selectedProduct,
+                    quantity_available: Number(e.target.value),
+                  } as Product)
+                }
+                type="number"
+                id="quantity"
+                placeholder="Enter quantity"
+                className="w-full mt-1 px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-black"
+              />
+            </div>
+
+            {/* Price */}
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                Price (₹)
+              </label>
+              <input
+                type="number"
+                value={selectedProduct?.price || 0}
+                onChange={(e) =>
+                  setSelectedProduct({
+                    ...selectedProduct,
+                    price: Number(e.target.value),
+                  } as Product)
+                }
+                id="price"
+                placeholder="Enter price"
+                className="w-full mt-1 px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-black"
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-2 mt-2">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="flex-1 py-2 rounded-xl border text-sm text-gray-600"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="flex-1 py-2 rounded-xl bg-black text-white text-sm font-medium active:scale-[0.97] transition"
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </aside>
   );
 }

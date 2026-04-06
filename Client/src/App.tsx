@@ -13,6 +13,7 @@ import AllPurches from "./Components/Admin/AllPurches"
 import AllTransaction from "./Components/Admin/AllTransaction"
 import PurchesDetails from "./Components/Admin/PurchesDetails"
 import LowProductStock from "./Components/Admin/LowProductStock"
+import Debitors from "./Components/Admin/debitors"
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/purches-details" element={<PurchesDetails />} />
           <Route path="/all-transaction" element={<AllTransaction />} />
           <Route path="/low-stock-product" element={<LowProductStock />} />
+          <Route path="/debitors" element={<Debitors />} />
         </Route>
 
       </Routes>

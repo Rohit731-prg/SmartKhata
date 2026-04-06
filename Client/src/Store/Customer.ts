@@ -1,7 +1,6 @@
 import { create } from 'zustand';
-// import api from '../Utils/axios';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { api } from '../Utils/axios';
 
 type customer = {
     _id: string,
@@ -19,7 +18,8 @@ type Store = {
     total_customer: number,
     addCustomer: (data: any) => void,
     getAllCustomers: () => void,
-    setCustomer: (customer: customer) => void
+    setCustomer: (customer: customer) => void,
+    debtors: () => Promise<void>
 }
 
 const customerStore = create<Store>()((set) => ({
@@ -32,11 +32,10 @@ const customerStore = create<Store>()((set) => ({
             console.log(data);
             console.log("function called");
 
-            const promise = axios.post("http://localhost:4000/api/customer/createCustomer", {
+            const promise = api.post("http://localhost:4000/api/customer/createCustomer", {
                 name: data.name,
                 phone: data.phone,
                 address: data.address,
-                shop: "bh"
             });
             console.log(promise)
             toast.promise(promise, {
@@ -55,7 +54,7 @@ const customerStore = create<Store>()((set) => ({
 
     getAllCustomers: async () => {
         try {
-            const response = await axios.get("http://localhost:4000/api/customer/getAllCustomers");
+            const response = await api.get("http://localhost:4000/api/customer/getAllCustomers");
             console.log(response);
             set({ customers: response?.data?.customers });
 
@@ -64,6 +63,17 @@ const customerStore = create<Store>()((set) => ({
         }
     },
     setCustomer: (customer: customer) => set({ customer }),
+
+    debtors: async () => {
+        try {
+            const response = await api.get("http://localhost:4000/api/customer/getDebitors");
+            console.log(response);
+            set({ customers: response?.data?.debitors });
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || error.message || "Internal Server error");
+            console.error(error)
+        }
+    }
 
 }));
 
