@@ -47,7 +47,7 @@ export const createPurchers = async (req, res) => {
 export const getAllPurches = async (req, res) => {
     const { id } = req.params;
     try {
-        const purches = await Purches.find({ Admin: req.admin, Customer: id });
+        const purches = await Purches.find({ Admin: req.admin, Customer: id }).sort({ createdAt: -1 });
         if (purches.length === 0) return res.status(404).json({ message: "No purches found" });
         res.status(200).json({ purches });
     } catch (error) {

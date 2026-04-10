@@ -29,7 +29,6 @@ export const getAllTransactions = async (req, res) => {
         if (!transactions) return res.status(404).json({ message: "No transactions found" });
         res.status(200).json({ transactions });
     } catch (error) {
-        console.error("Error fetching transactions:", error);
         res.status(500).json({ message: error.message });
     }
 }

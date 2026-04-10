@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import axios from 'axios'
 import toast from 'react-hot-toast'
 import { api } from '../Utils/axios'
 
@@ -13,6 +12,11 @@ interface AdminResponse {
     name: string,
     phone: string,
     image?: string
+}
+
+interface signUp extends Login {
+    name: string,
+    image: File | null
 }
 
 interface basicDetails {
@@ -39,6 +43,7 @@ type Store = {
     setAdmin: (admin: Login) => Promise<boolean>
     getBasicDetails: () => Promise<void>
     logout: () => void
+    craeteAdmin: (admin: signUp) => Promise<void>
 }
 
 const useAdminStore = create<Store>()(
@@ -97,7 +102,33 @@ const useAdminStore = create<Store>()(
                     console.error("Error fetching basic details:", error);
                 }
             },
-            logout: () => set({ admin: null })
+            logout: () => set({ admin: null }),
+
+            craeteAdmin: async (admin: signUp) => {
+                try {
+                    const formData = new FormData();
+                    formData.append("name", admin.name);
+                    formData.append("phone", admin.phone);
+                    formData.append("password", admin.password);
+                    if (admin.image) {
+                        formData.append("image", admin.image);
+                    }
+
+                    const promise = api.post("/admin/createAdmin", formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    });
+                    await toast.promise(promise, {
+                        loading: "Creating admin...",
+                        success: (res) => res.data.message || "Admin created successfully",
+                        error: (err) => err.response?.data?.message || "Failed to create admin"
+                    });
+                } catch (error: any) {
+                    toast.error(error?.response?.data?.message || error.message || "Failed to create admin");
+                    console.error("Error creating admin:", error);
+                }
+            }
         }),
         {
             name: "admin-storage",

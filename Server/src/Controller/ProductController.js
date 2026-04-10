@@ -39,7 +39,7 @@ export const updateProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({ shop: req.admin });
+        const products = await Product.find({ shop: req.admin }).sort({ createdAt: -1 });
         if (!products) return res.status(400).json({ message: "No products found on this request" });
 
         return res.status(200).json({ products });
@@ -50,8 +50,7 @@ export const getAllProducts = async (req, res) => {
 
 export const getLowQuantityProducts = async (req, res) => {
     try {
-        const products = await Product.find({ shop: req.admin });
-        console.log(products);
+        const products = await Product.find({ shop: req.admin, quantity_available: { $lte: 10 } }).sort({ createdAt: -1 });
         if (products.length === 0) return res.status(400).json({ message: "No low-quantity products found" });
 
         return res.status(200).json({ products });

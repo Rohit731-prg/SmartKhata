@@ -10,8 +10,8 @@ export const createAdmin = async (req, res) => {
     try {
         const is_exist = await Admin.findOne({phone});
         if (is_exist) return res.status(400).json({ message: `${phone} this number is already exist in database` });
-        // const isValidPhone = /^[6-9]\d{9}$/.test(phone);
-        // if (!isValidPhone) return res.status(400).json({ message: `${phone} this number is not a valid mobile number` });
+        const isValidPhone = /^[6-9]\d{9}$/.test(phone);
+        if (!isValidPhone) return res.status(400).json({ message: `${phone} this number is not a valid mobile number` });
 
         const hashPassword = await setPassword(password);
         const newAdmin = new Admin({
@@ -54,20 +54,20 @@ export const loginController = async (req, res) => {
 
 export const getAllBasicDetails = async (req, res) => {
     try {
-        const products = await Product.find().select("product_name price createdAt").sort({ createAt: -1 }).limit(5);
-        const customers = await Customer.find().select("name phone createdAt").sort({ createAt: -1 }).limit(5);
+        const products = await Product.find({ shop: req.admin }).select("product_name price createdAt").sort({ createAt: -1 }).limit(5);
+        const customers = await Customer.find({ shop: req.admin }).select("name phone createdAt").sort({ createAt: -1 }).limit(5);
 
-        const products_count = await Product.countDocuments();
-        const customers_count = await Customer.countDocuments();
+        const products_count = await Product.countDocuments({ shop: req.admin });
+        const customers_count = await Customer.countDocuments({ shop: req.admin });
 
         let total_amount = 0;
         for (const product of products) {
             total_amount += product.price;
         };
 
-        const total_sale_month = 0;
+        let total_sale_month = 0;
         for (const product of products) {
-            if (new Date(product.createAt).getMonth() === new Date().getMonth()) {
+            if (new Date(product.createdAt).getMonth() === new Date().getMonth()) {
                 total_sale_month += product.price;
             };
         };
