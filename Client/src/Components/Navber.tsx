@@ -7,6 +7,7 @@ function Navber() {
         { name: "Home", navigate: "/home", icon: "🏠" },
         { name: "Products", navigate: "/all-products", icon: "📦" },
         { name: "Users", navigate: "/all-customer", icon: "👥" },
+        { name: "Journals", navigate: "/jounals", icon: "🖍️" },
         { name: "Orders", navigate: "/all-transaction", icon: "🛒" },
     ];
 

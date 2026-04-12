@@ -3,41 +3,51 @@ import { create } from 'zustand'
 import { api } from '../Utils/axios'
 
 interface Journal {
+    _id: string
     products: any[]
-    total_amount: number
+    total_amout: number
     createdAt: string
 }
 
 type Store = {
-    journal: null | Journal[]
+    jurnal: null | string
+    journals: null | Journal[]
+    setJournal: (id: string) => void
     getAllJournals: () => Promise<void>
     createNewJournal: (data: any) => Promise<void>
 }
 
-const useStore = create<Store>()((set) => ({
-    journal: null,
+const useJournalStore = create<Store>()((set) => ({
+    jurnal: null,
+    journals: null,
+    setJournal: (id: string) => {
+        set({ jurnal: id });
+    },
     getAllJournals: async () => {
         try {
             const response = await api.get("/journal/getAllJournal");
             console.log(response);
-            set({ journal: response.data.journals });
+            set({ journals: response.data.journals });
         } catch (error: any) {
-            toast.error(error.message)
+            toast.error(error.response.data.message || error.message)
             console.log(error);
         }
     },
     createNewJournal: async (data: any) => {
         try {
-            const response = api.post("/journal/create_journal", data)
+            const response = api.post("/journal/create_journal", {
+                products: data
+            })
             toast.promise(response, {
                 loading: "loading ...",
                 success: (res) => res.data.message || "journal added successfully..",
                 error: (err) =>  err?.response?.data?.message || err.message || "Failed to update product."
             })
             await response
-            console.log(response);
         } catch (error) {
             console.log(error);
         }
     }
-}))
+}));
+
+export default useJournalStore;

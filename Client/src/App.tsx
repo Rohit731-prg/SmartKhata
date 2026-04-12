@@ -13,7 +13,10 @@ import AllPurches from "./Components/Admin/AllPurches"
 import AllTransaction from "./Components/Admin/AllTransaction"
 import PurchesDetails from "./Components/Admin/PurchesDetails"
 import LowProductStock from "./Components/Admin/LowProductStock"
-import Debitors from "./Components/Admin/debitors"
+import Journals from "./Components/Admin/Journals"
+import Debitors from "./Components/Admin/Debitors"
+import AddJournal from "./Components/Admin/AddJournal"
+import JournalDetails from "./Components/Admin/JournalDetails"
 
 function App() {
   return (
@@ -37,6 +40,9 @@ function App() {
           <Route path="/all-transaction" element={<AllTransaction />} />
           <Route path="/low-stock-product" element={<LowProductStock />} />
           <Route path="/debitors" element={<Debitors />} />
+          <Route path="/jounals" element={<Journals />} />
+          <Route path="/add-journal" element={<AddJournal />} />
+          <Route path="/journal-details" element={<JournalDetails />} />
         </Route>
 
       </Routes>

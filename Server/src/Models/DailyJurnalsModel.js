@@ -8,5 +8,5 @@ const DailyJurnalSchema = new Schema({
     timestamps: true
 });
 
-const DailyJournal = mongoose.Model("DailyJournals", DailyJurnalSchema);
+const DailyJournal = mongoose.model("DailyJournals", DailyJurnalSchema);
 export default DailyJournal

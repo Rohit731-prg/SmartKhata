@@ -45,7 +45,6 @@ const usePurchesStore = create<Store>()((set) => ({
                 quantity: product.quantity
             });
         }
-        console.log("productList: ", productList);
         try {
             const response = api.post("/purches/add_purches", {
                 products: productList,

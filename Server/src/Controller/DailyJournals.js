@@ -29,7 +29,7 @@ export const create_journals = async (req, res) => {
 
 export const getAllJounals = async (req, res) => {
     try {
-        const journals = await DailyJournal.find({ admin: req.admin })
+        const journals = await DailyJournal.find({ admin: req.admin }).sort({ createdAt: -1 });
         if (!journals || journals.length == 0) return res.status(400).json({ message: "No records found" });
         return res.status(200).json({ journals });
     } catch (error) {
@@ -40,11 +40,12 @@ export const getAllJounals = async (req, res) => {
 export const getJounalDetails = async (req, res) => {
     const { id } = req.params;
     try {
-        const jounals = await findById(id);
+        const jounals = await DailyJournal.findById(id);
         if (!jounals) return res.status(400).json({ message: "No records found" });
 
         let response = []
-        for (const journal of jounals) {
+        for (const journal of jounals.products) {
+            console.log("journal: ", journal);
             const data = await Product.findById(journal.product).select("product_name price type");
             if (!data) return res.status(400).json({ message: "Data missing from product list" });
             let obj = {
@@ -56,6 +57,7 @@ export const getJounalDetails = async (req, res) => {
 
         return res.status(200).json({ response });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: error.message });
     }
 }
