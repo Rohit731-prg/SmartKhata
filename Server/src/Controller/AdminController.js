@@ -16,7 +16,7 @@ export const createAdmin = async (req, res) => {
         const hashPassword = await setPassword(password);
         const newAdmin = new Admin({
             name,
-            phone,
+            phone: `+91${phone}`,
             password: hashPassword,
             image: req.image_url,
             image_id: req.image_id
@@ -33,7 +33,7 @@ export const loginController = async (req, res) => {
     if (!phone || !password) return  res.status(400).json({ message: "All data is requesrd" });
 
     try {
-        const is_exist = await Admin.findOne({phone});
+        const is_exist = await Admin.findOne({phone: `+91${phone}`});
         if (!is_exist) return res.status(400).json({ message: "Phone number does not found" });
 
         const is_password_match = await getPasswordCheck(password, is_exist.password);

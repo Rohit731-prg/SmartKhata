@@ -1,11 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useAdminStore from "../../Store/Admin";
 import { useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import Modal from 'react-modal';
+import useJournalStore from "../../Store/Journal";
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    transform: "translate(-50%, -50%)",
+    width: "90%",
+    maxWidth: "1000px",
+    maxHeight: "90vh",
+    overflow: "auto",
+  },
+};
 
 function Home() {
   const navigate = useNavigate();
   const { getBasicDetails, basicDeials, admin } = useAdminStore();
+  const { get_ai_response } = useJournalStore();
+
+  const [ai_response, setAi_response] = useState<any>(null);
+  const [ai_response_html, setAI_response_response] = useState<any>(null);
+
   const basicDetails = [
     { name: "Total Users", value: basicDeials?.totalUsers || 0 },
     { name: "Total Products", value: basicDeials?.totalProducts || 0 },
@@ -15,14 +35,37 @@ function Home() {
     },
     { name: "Total Sales", value: basicDeials?.totalSales || 0 },
   ];
+
   const details = [
     { name: "See Your Debtors", navigate: "/debitors" },
     { name: "See low stock products", navigate: "/low-stock-product" },
   ];
 
+  const get_ai_response_function = async () => {
+    const response = await get_ai_response();
+    let trim_response = response?.data.response.trim();
+    trim_response = trim_response.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
+    
+    try {
+      const new_parsed_deta = JSON.parse(trim_response)
+      const trim_html_data = new_parsed_deta.html_report.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
+      console.log(trim_html_data)
+      console.log(new_parsed_deta)
+      setAi_response(new_parsed_deta)
+      setAI_response_response(trim_html_data) 
+    } catch (error) {
+      setAi_response(null)
+    } finally {
+      setIsOpen(true);
+    }
+  }
+
   useEffect(() => {
     getBasicDetails();
   }, []);
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+
   return (
     <aside className="w-full bg-white min-h-screen p-8 rounded-2xl shadow-sm border border-gray-200">
       <div className="flex flex-row justify-between">
@@ -67,6 +110,14 @@ function Home() {
               <span className="text-white">→</span>
             </button>
           ))}
+        </div>
+
+        <div className="my-3">
+          <button
+            onClick={() => get_ai_response_function()}
+            className="bg-blue-500 border font-semibold border-blue-800 px-4 py-3 rounded-xl text-sm  text-white flex items-center justify-between group">
+            View Next Month Prediction
+          </button>
         </div>
       </section>
 
@@ -142,7 +193,44 @@ function Home() {
           )}
         </section>
       </div>
-      <Toaster/>
+      <Toaster />
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setIsOpen(false)}
+        style={customStyles}
+      >
+        {ai_response ? (
+          <div className="max-h-[85vh] overflow-y-auto p-4">
+            {/* Header */}
+            <h3 className="text-lg font-bold mb-2">Forecast Summary</h3>
+            <p className="text-sm text-gray-600 mb-1">
+              Products analyzed: {ai_response.forecast_summary.total_products_analyzed}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">
+              Top category: {ai_response.forecast_summary.top_performing_category}
+            </p>
+            <p className="text-sm text-red-600 mb-4">
+              {ai_response.forecast_summary.overall_stock_risk}
+            </p>
+
+            {/* Option A: render the ready-made HTML report from the backend */}
+            <div
+              dangerouslySetInnerHTML={{ __html: ai_response.html_report }}
+            />
+
+            {/* Close button */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </Modal>
     </aside>
   );
 }

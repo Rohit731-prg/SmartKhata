@@ -15,6 +15,7 @@ type Store = {
     setJournal: (id: string) => void
     getAllJournals: () => Promise<void>
     createNewJournal: (data: any) => Promise<void>
+    get_ai_response: () => Promise<any>
 }
 
 const useJournalStore = create<Store>()((set) => ({
@@ -46,6 +47,23 @@ const useJournalStore = create<Store>()((set) => ({
             await response
         } catch (error) {
             console.log(error);
+        }
+    },
+
+    get_ai_response: async () => {
+        try {
+            const response = api.get("/journal/get-ai-response");
+            toast.promise(response, {
+                loading: "loading ...",
+                success: (res) => res.data.message || "AI response fetch successfully..",
+                error: (err) =>  err?.response?.data?.message || err.message || "Failed to update product."
+            });
+
+            const response_details = await response;
+            console.log(typeof response_details)
+            return response_details
+        } catch (error) {
+            console.log(error)
         }
     }
 }));
