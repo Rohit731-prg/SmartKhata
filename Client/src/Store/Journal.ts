@@ -51,21 +51,32 @@ const useJournalStore = create<Store>()((set) => ({
     },
 
     get_ai_response: async () => {
-        try {
-            const response = api.get("/journal/get-ai-response");
-            toast.promise(response, {
-                loading: "loading ...",
-                success: (res) => res.data.message || "AI response fetch successfully..",
-                error: (err) =>  err?.response?.data?.message || err.message || "Failed to update product."
-            });
+    try {
+        const response = api.get("/journal/get-ai-response");
 
-            const response_details = await response;
-            console.log(typeof response_details)
-            return response_details
-        } catch (error) {
-            console.log(error)
-        }
+        toast.promise(response, {
+            loading: "Loading...",
+            success: (res) =>
+                res.data.message || "AI response fetched successfully.",
+            error: (err) =>
+                err?.response?.data?.message ||
+                err.message ||
+                "Failed to fetch AI response.",
+        });
+
+        const response_details = await response;
+
+        console.log("FULL RESPONSE:", response_details);
+        console.log("DATA:", response_details.data);
+        console.log("AI RESPONSE:", response_details.data.response);
+
+        return response_details;
+
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
+},
 }));
 
 export default useJournalStore;

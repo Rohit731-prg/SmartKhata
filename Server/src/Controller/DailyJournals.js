@@ -1,6 +1,6 @@
-import getAIresponse from "../GenAI/genAI.js";
 import DailyJournal from "../Models/DailyJurnalsModel.js";
 import Product from "../Models/ProductModel.js";
+import { generate_content } from "../Utils/generateContent.js";
 
 export const create_journals = async (req, res) => {
   const { products } = req.body;
@@ -85,29 +85,45 @@ export const getJounalDetails = async (req, res) => {
 
 export const getAiResponse = async (req, res) => {
   try {
-    const now = new Date();
-    const current_month = new Date(now.getFullYear(), now.getMonth());
-    const previous_month = new Date(now.getFullYear(), now.getMonth() - 1);
+    
 
     const transactions = await DailyJournal.find({
-      createdAt: {
-        $gte: previous_month,
-        $lt: current_month,
-      },
       admin: req.admin
-    });
+    }).sort({ createdAt: -1 }).limit(30);
 
-    let products_list = [];
+    console.log(transactions)
+
+    const products_list = [];
     for (const products of transactions) {
       for (const product of products.products) {
-        const product_details_info = await Product.findById(product.product);
-        products_list.push({ product_details: product_details_info, quantity: product.quantity});
+        const product_details_info = await Product.findById(product.product).select(
+          "product_name price type",
+        );
+        if (product_details_info) {
+          products_list.push({
+            product_name: product_details_info.product_name,
+            price: product_details_info.price,
+            type: product_details_info.type,
+            quantity: product.quantity,
+          });
+        }
       }
     }
 
-    if (products_list == []) return res.status(400).json({ message: "No Record found" });
+    if (products_list.length === 0)
+      return res.status(400).json({ message: "No Record found" });
 
-    const response = await getAIresponse(products_list);
+    const products_context = products_list
+      .map(
+        (product) =>
+          `Product: ${product.product_name}, Quantity sold: ${product.quantity} ${product.type}, Unit price: ${product.price}`,
+      )
+      .join("\n");
+
+    const response = await generate_content(
+      products_context,
+      "Analyze last month's product sales and provide concise insights, including the best-selling products and practical inventory recommendations.",
+    );
     console.log(response);
     return res.status(200).json({ response });
   } catch (error) {

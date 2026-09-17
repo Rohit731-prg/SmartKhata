@@ -5,8 +5,8 @@ import { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 function AddCustomer() {
-  const navigate = useNavigate();
   const { addCustomer } = customerStore();
+  const navigate = useNavigate();
 
   const [data, setData] = useState({
     name: "",

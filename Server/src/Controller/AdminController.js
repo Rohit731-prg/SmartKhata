@@ -31,7 +31,7 @@ export const createAdmin = async (req, res) => {
 export const loginController = async (req, res) => {
     const {phone, password} = req.body;
     if (!phone || !password) return  res.status(400).json({ message: "All data is requesrd" });
-
+    console.log(phone, password)
     try {
         const is_exist = await Admin.findOne({phone: `+91${phone}`});
         if (!is_exist) return res.status(400).json({ message: "Phone number does not found" });
@@ -48,6 +48,7 @@ export const loginController = async (req, res) => {
         });
         return res.status(200).json({ is_exist });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: error.message });
     }
 };

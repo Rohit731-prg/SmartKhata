@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useJournalStore from "../../Store/Journal";
 import { api } from "../../Utils/axios";
 import toast, { Toaster } from "react-hot-toast";

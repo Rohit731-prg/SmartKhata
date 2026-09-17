@@ -1,0 +1,16 @@
+services:
+  server:
+    build: ./server
+    container_name: smartkhata-server
+    env_file:
+      - ./Server/.env
+    ports:
+      - 4000:4000
+  
+  client:
+    build: ./client
+    container_name: smartkhata-client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server

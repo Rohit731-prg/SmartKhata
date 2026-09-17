@@ -20,11 +20,11 @@ const customStyles = {
 
 function Home() {
   const navigate = useNavigate();
+
   const { getBasicDetails, basicDeials, admin } = useAdminStore();
   const { get_ai_response } = useJournalStore();
-
+  
   const [ai_response, setAi_response] = useState<any>(null);
-  const [ai_response_html, setAI_response_response] = useState<any>(null);
 
   const basicDetails = [
     { name: "Total Users", value: basicDeials?.totalUsers || 0 },
@@ -42,23 +42,25 @@ function Home() {
   ];
 
   const get_ai_response_function = async () => {
-    const response = await get_ai_response();
-    let trim_response = response?.data.response.trim();
-    trim_response = trim_response.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
-    
     try {
-      const new_parsed_deta = JSON.parse(trim_response)
-      const trim_html_data = new_parsed_deta.html_report.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
-      console.log(trim_html_data)
-      console.log(new_parsed_deta)
-      setAi_response(new_parsed_deta)
-      setAI_response_response(trim_html_data) 
+        const [, response] = await Promise.all([
+          getBasicDetails(),
+          get_ai_response(),
+        ]);
+
+        const data = response.data.response;
+
+        console.log("AI DATA:", data);
+
+        setAi_response(data);
+
     } catch (error) {
-      setAi_response(null)
+        console.error("AI response error:", error);
+        setAi_response(null);
     } finally {
-      setIsOpen(true);
+        setIsOpen(true);
     }
-  }
+};
 
   useEffect(() => {
     getBasicDetails();
