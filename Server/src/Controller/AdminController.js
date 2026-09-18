@@ -8,7 +8,7 @@ export const createAdmin = async (req, res) => {
     const { name, phone, password } = req.body;
     if (!name || !phone || !password) return res.status(400).json({ message: "All data is requesrd" });
     try {
-        const is_exist = await Admin.findOne({phone});
+        const is_exist = await Admin.findOne({ phone });
         if (is_exist) return res.status(400).json({ message: `${phone} this number is already exist in database` });
         const isValidPhone = /^[6-9]\d{9}$/.test(phone);
         if (!isValidPhone) return res.status(400).json({ message: `${phone} this number is not a valid mobile number` });
@@ -29,22 +29,25 @@ export const createAdmin = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
-    const {phone, password} = req.body;
-    if (!phone || !password) return  res.status(400).json({ message: "All data is requesrd" });
+    const { phone, password } = req.body;
+    if (!phone || !password) return res.status(400).json({ message: "All data is requesrd" });
     console.log(phone, password)
     try {
-        const is_exist = await Admin.findOne({phone: `+91${phone}`});
+        const is_exist = await Admin.findOne({ phone: `+91${phone}` });
         if (!is_exist) return res.status(400).json({ message: "Phone number does not found" });
 
         const is_password_match = await getPasswordCheck(password, is_exist.password);
         if (!is_password_match) return res.status(400).json({ message: "Password does not match" });
 
         const tokan = createToken({ id: is_exist._id, phone: is_exist.phone });
+        const isProduction = process.env.NODE_ENV === "production";
+
         res.cookie("token", tokan, {
             httpOnly: true,
-            secure: false,
-            sameSite: "strict",
-            maxAge: 24 * 60 * 60 * 1000
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
+            maxAge: 24 * 60 * 60 * 1000,
+            path: "/"
         });
         return res.status(200).json({ is_exist });
     } catch (error) {

@@ -83,7 +83,7 @@ const useAdminStore = create<Store>()(
             },
             getBasicDetails: async () => {
                 try {
-                    const response = await api.get("http://localhost:4000/api/admin/basicDetails");
+                    const response = await api.get("/admin/basicDetails");
                     const data = response.data;
                     console.log("Basic details fetched:", data);
                     set({
