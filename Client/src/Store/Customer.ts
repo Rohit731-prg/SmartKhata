@@ -32,7 +32,7 @@ const customerStore = create<Store>()((set) => ({
             console.log(data);
             console.log("function called");
 
-            const promise = api.post("http://localhost:4000/api/customer/createCustomer", {
+            const promise = api.post("/customer/createCustomer", {
                 name: data.name,
                 phone: data.phone,
                 address: data.address,
@@ -54,7 +54,7 @@ const customerStore = create<Store>()((set) => ({
 
     getAllCustomers: async () => {
         try {
-            const response = await api.get("http://localhost:4000/api/customer/getAllCustomers");
+            const response = await api.get("/customer/getAllCustomers");
             console.log(response);
             set({ customers: response?.data?.customers });
 
@@ -66,7 +66,7 @@ const customerStore = create<Store>()((set) => ({
 
     debtors: async () => {
         try {
-            const response = await api.get("http://localhost:4000/api/customer/getDebitors");
+            const response = await api.get("/customer/getDebitors");
             console.log(response);
             set({ customers: response?.data?.debitors });
         } catch (error: any) {

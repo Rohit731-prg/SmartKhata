@@ -66,9 +66,9 @@ const useJournalStore = create<Store>()((set) => ({
 
         const response_details = await response;
 
-        console.log("FULL RESPONSE:", response_details);
-        console.log("DATA:", response_details.data);
-        console.log("AI RESPONSE:", response_details.data.response);
+        // console.log("FULL RESPONSE:", response_details);
+        // console.log("DATA:", response_details.data);
+        // console.log("AI RESPONSE:", response_details.data.response);
 
         return response_details;
 
