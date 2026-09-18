@@ -2,8 +2,8 @@ import Admin from "../Models/AdminModel.js";
 import { decodeToken } from "../Utils/token.js";
 
 export const verifyJwt = async (req, res, next) => {
-    const { token } = req.cookies;
-    if (!token) return res.status(404).json({ message: "Token not found "});
+    const token = await req.cookies.token;
+    if (!token) return res.status(400).json({ message: "Token not found " });
     try {
         const decode = decodeToken(token);
         const adminID = await Admin.findOne({ _id: decode.id });
